@@ -22,6 +22,13 @@
 #include <zephyr/bluetooth/services/bas.h>
 #include <zephyr/bluetooth/services/hrs.h>
 
+#include <dk_buttons_and_leds.h>
+
+
+#define RUN_STATUS_LED	DK_LED1
+#define CON_STATUS_LED	DK_LED2
+
+
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
@@ -35,13 +42,28 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	if (err) {
 		printk("Connection failed (err 0x%02x)\n", err);
 	} else {
-		printk("Connected\n");
+		dk_set_led_on(CON_STATUS_LED);
+
+		struct bt_conn_info info;
+		char addr_str[BT_ADDR_LE_STR_LEN];
+
+		bt_conn_get_info(conn, &info);
+		bt_addr_le_to_str(info.le.dst, addr_str, sizeof(addr_str));
+
+		printk("Connected with %s\n", addr_str);
 	}
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	printk("Disconnected (reason 0x%02x)\n", reason);
+	struct bt_conn_info info;
+	char addr_str[BT_ADDR_LE_STR_LEN];
+
+	bt_conn_get_info(conn, &info);
+	bt_addr_le_to_str(info.le.dst, addr_str, sizeof(addr_str));
+
+	printk("Disconnected with %s (reason 0x%02x)\n", addr_str, reason);
+	dk_set_led_off(CON_STATUS_LED);
 }
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
@@ -106,15 +128,28 @@ static void hrs_notify(void)
 int main(void)
 {
 	int err;
+	int blink_status = 0;
 
+	/* Initialize LEDs
+	 */
+	err = dk_leds_init();
+	if (err) {
+		printk("LEDs init failed (err %d)\n", err);
+		return 0;
+	}
+	printk("LEDs initialized\n");
+
+	/* Initialize Bluetooth
+	 */
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return 0;
 	}
+	printk("Bluetooth initialized\n");
 
+	/* Start advertising */
 	bt_ready();
-
 	bt_conn_auth_cb_register(&auth_cb_display);
 
 	/* Implement notification. At the moment there is no suitable way
@@ -122,6 +157,9 @@ int main(void)
 	 */
 	while (1) {
 		k_sleep(K_SECONDS(1));
+
+		/* Blink the LED */
+		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
 
 		/* Heartrate measurements simulation */
 		hrs_notify();
