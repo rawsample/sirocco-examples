@@ -19,6 +19,12 @@
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/sys/byteorder.h>
 
+#include <dk_buttons_and_leds.h>
+
+
+#define RUN_STATUS_LED	DK_LED1
+#define CON_STATUS_LED	DK_LED2
+
 
 static void start_scan(void);
 
@@ -27,6 +33,9 @@ static struct bt_conn *default_conn;
 static struct bt_uuid_16 discover_uuid = BT_UUID_INIT_16(0);
 static struct bt_gatt_discover_params discover_params;
 static struct bt_gatt_subscribe_params subscribe_params;
+
+static int blink_status = 0;
+
 
 static uint8_t notify_func(struct bt_conn *conn,
 			   struct bt_gatt_subscribe_params *params,
@@ -37,6 +46,9 @@ static uint8_t notify_func(struct bt_conn *conn,
 		params->value_handle = 0U;
 		return BT_GATT_ITER_STOP;
 	}
+
+	/* Blink the LED */
+	dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
 
 	printk("[NOTIFICATION] data %p length %u\n", data, length);
 
@@ -200,6 +212,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 		return;
 	}
 
+    dk_set_led_on(CON_STATUS_LED);
 	printk("Connected: %s\n", addr);
 
 	if (conn == default_conn) {
@@ -225,6 +238,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	printk("Disconnected: %s (reason 0x%02x)\n", addr, reason);
+	dk_set_led_off(CON_STATUS_LED);
 
 	if (default_conn != conn) {
 		return;
@@ -244,13 +258,23 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 int main(void)
 {
 	int err;
-	err = bt_enable(NULL);
 
+	/* Initialize LEDs
+	 */
+	err = dk_leds_init();
+	if (err) {
+		printk("LEDs init failed (err %d)\n", err);
+		return 0;
+	}
+	printk("LEDs initialized\n");
+
+	/* Initialize Bluetooth
+	 */
+	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return 0;
 	}
-
 	printk("Bluetooth initialized\n");
 
 	start_scan();
