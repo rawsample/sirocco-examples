@@ -24,6 +24,8 @@
 
 #include <dk_buttons_and_leds.h>
 
+#include "detect_btlejuice.h"
+
 
 #define RUN_STATUS_LED	DK_LED1
 #define CON_STATUS_LED	DK_LED2
@@ -151,6 +153,9 @@ int main(void)
 	/* Start advertising */
 	bt_ready();
 	bt_conn_auth_cb_register(&auth_cb_display);
+
+	/* Start BTLEJuice detection thread */
+	sirocco_btlejuice_start();
 
 	/* Implement notification. At the moment there is no suitable way
 	 * of starting delayed work so we do it here
