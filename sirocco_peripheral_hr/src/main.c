@@ -21,14 +21,32 @@
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/services/bas.h>
 #include <zephyr/bluetooth/services/hrs.h>
+#include <zephyr/bluetooth/controller.h>
+
 
 #include <dk_buttons_and_leds.h>
 
-#include "detect_btlejuice.h"
+#include <zephyr/bluetooth/sirocco.h>
 
 
 #define RUN_STATUS_LED	DK_LED1
 #define CON_STATUS_LED	DK_LED2
+
+/* Define multiple speed for advertising */
+#define SLOOOW_ADV BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME, \
+                                   0x1000, 0x1100, NULL)
+#define SLOOW_ADV BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME, \
+                                   0x500, 0x600, NULL)
+#define SLOW_ADV BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME, \
+                                 0x200, 0x250, NULL)
+#define MID_ADV BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME, \
+                                0x100, 0x120, NULL)
+#define FAST_ADV BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME, \
+                                 0x30, 0x40, NULL)
+
+/* Advertise only on the channel 37 */
+#define SLOW_ADV_37 BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME | BT_LE_ADV_OPT_DISABLE_CHAN_38 | BT_LE_ADV_OPT_DISABLE_CHAN_39, \
+                                 0x200, 0x250, NULL)
 
 
 static const struct bt_data ad[] = {
@@ -79,7 +97,7 @@ static void bt_ready(void)
 
 	printk("Bluetooth initialized\n");
 
-	err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);
+	err = bt_le_adv_start(SLOW_ADV_37, ad, ARRAY_SIZE(ad), NULL, 0);
 	if (err) {
 		printk("Advertising failed to start (err %d)\n", err);
 		return;
@@ -131,6 +149,8 @@ int main(void)
 {
 	int err;
 	int blink_status = 0;
+    /* Use a known fixed address to ease development */
+    const uint8_t public_addr[BDADDR_SIZE] = {0xaa, 0xaa, 0xef, 0xbe, 0xad, 0xde};
 
 	/* Initialize LEDs
 	 */
@@ -141,6 +161,9 @@ int main(void)
 	}
 	printk("LEDs initialized\n");
 
+    /* Set advertising address */
+    bt_ctlr_set_public_addr((const uint8_t *) &public_addr);
+
 	/* Initialize Bluetooth
 	 */
 	err = bt_enable(NULL);
@@ -150,12 +173,13 @@ int main(void)
 	}
 	printk("Bluetooth initialized\n");
 
+    /* Initialized Sirocco IDS */
+	srcc_init();
+
 	/* Start advertising */
 	bt_ready();
 	bt_conn_auth_cb_register(&auth_cb_display);
 
-	/* Start BTLEJuice detection thread */
-	sirocco_btlejuice_start();
 
 	/* Implement notification. At the moment there is no suitable way
 	 * of starting delayed work so we do it here
