@@ -29,6 +29,8 @@
 #include <zephyr/bluetooth/buf.h>
 #include <zephyr/bluetooth/hci_raw.h>
 
+#include <zephyr/bluetooth/sirocco.h>
+
 #define LOG_MODULE_NAME hci_uart
 LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
@@ -352,6 +354,19 @@ static int hci_uart_init(void)
 	return 0;
 }
 
+static int init_sirocco(void)
+{
+	/* Initialize Sirocco Zephyr subsystem */
+	srcc_init();
+ 
+    /* Register callbacks
+    TODO
+	srcc_cb_register(&cb);
+    */
+
+	return 0;
+}
+
 SYS_INIT(hci_uart_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
 
 int main(void)
@@ -365,6 +380,14 @@ int main(void)
 
 	/* Enable the raw interface, this will in turn open the HCI driver */
 	bt_enable_raw(&rx_queue);
+
+	/* Initialize Sirocco Bluetooth IDS */
+	err = init_sirocco();
+	if (err) {
+		printk("Sirocco Bluetooth IDS init failed (err %d)\n", err);
+		return 0;
+	}
+	printk("Sirocco Bluetooth IDS initialized\n");
 
 	if (IS_ENABLED(CONFIG_BT_WAIT_NOP)) {
 		/* Issue a Command Complete with NOP */
