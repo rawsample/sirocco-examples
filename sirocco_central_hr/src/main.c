@@ -21,6 +21,8 @@
 
 #include <dk_buttons_and_leds.h>
 
+#include "sirocco_central.h"
+
 
 #define RUN_STATUS_LED	DK_LED1
 #define CON_STATUS_LED	DK_LED2
@@ -50,7 +52,7 @@ static uint8_t notify_func(struct bt_conn *conn,
 	/* Blink the LED */
 	dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
 
-	printk("[NOTIFICATION] data %p length %u\n", data, length);
+	printk("[NOTIFICATION] data @ %p length %u\n", data, length);
 
 	return BT_GATT_ITER_CONTINUE;
 }
@@ -114,7 +116,7 @@ static bool eir_found(struct bt_data *data, void *user_data)
 	bt_addr_le_t *addr = user_data;
 	int i;
 
-	printk("[AD]: %u data_len %u\n", data->type, data->data_len);
+	//printk("[AD]: %u data_len %u\n", data->type, data->data_len);
 
 	switch (data->type) {
 	case BT_DATA_UUID16_SOME:
@@ -142,7 +144,10 @@ static bool eir_found(struct bt_data *data, void *user_data)
 				continue;
 			}
 
-			param = BT_LE_CONN_PARAM_DEFAULT;
+            /* Modify the connection interval here. */
+			//param = BT_LE_CONN_PARAM_DEFAULT;
+            param = BT_LE_CONN_PARAM(0x28, 0x28, 0, 400);   // interval = 50 ms
+            //param = BT_LE_CONN_PARAM(0x18, 0x18, 0, 400);   // interval = 30 ms
 			err = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN,
 						param, &default_conn);
 			if (err) {
@@ -163,8 +168,8 @@ static void device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 	char dev[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(addr, dev, sizeof(dev));
-	printk("[DEVICE]: %s, AD evt type %u, AD data len %u, RSSI %i\n",
-	       dev, type, ad->len, rssi);
+	//printk("[DEVICE]: %s, AD evt type %u, AD data len %u, RSSI %i\n",
+	//       dev, type, ad->len, rssi);
 
 	/* We're only interested in connectable events */
 	if (type == BT_GAP_ADV_TYPE_ADV_IND ||
@@ -276,6 +281,16 @@ int main(void)
 		return 0;
 	}
 	printk("Bluetooth initialized\n");
+
+	/* Initialize Sirocco Bluetooth IDS
+	 */
+	err = init_sirocco();
+	if (err) {
+		printk("Sirocco Bluetooth IDS init failed (err %d)\n", err);
+		return 0;
+	}
+	printk("Sirocco Bluetooth IDS initialized\n");
+
 
 	start_scan();
 	return 0;
