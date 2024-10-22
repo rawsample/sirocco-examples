@@ -21,11 +21,15 @@
 
 #include <dk_buttons_and_leds.h>
 
-#include "sirocco_central.h"
+#include <zephyr/bluetooth/sirocco.h>
 
 
 #define RUN_STATUS_LED	DK_LED1
 #define CON_STATUS_LED	DK_LED2
+#define USER_BUTTON     DK_BTN1_MSK
+
+#define LBS_UUID_SERVICE BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123))
+#define LBS_UUID_LED_CHAR BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0x00001525, 0x1212, 0xefde, 0x1523, 0x785feabcd123))
 
 
 static void start_scan(void);
@@ -35,7 +39,9 @@ static struct bt_conn *default_conn;
 static struct bt_uuid_16 discover_uuid = BT_UUID_INIT_16(0);
 static struct bt_gatt_discover_params discover_params;
 static struct bt_gatt_subscribe_params subscribe_params;
+static struct bt_gatt_write_params write_params;
 
+static int led_char_handle;
 static int blink_status = 0;
 
 
@@ -81,6 +87,7 @@ static uint8_t discover_func(struct bt_conn *conn,
 		if (err) {
 			printk("Discover failed (err %d)\n", err);
 		}
+
 	} else if (!bt_uuid_cmp(discover_params.uuid,
 				BT_UUID_HRS_MEASUREMENT)) {
 		memcpy(&discover_uuid, BT_UUID_GATT_CCC, sizeof(discover_uuid));
@@ -93,6 +100,21 @@ static uint8_t discover_func(struct bt_conn *conn,
 		if (err) {
 			printk("Discover failed (err %d)\n", err);
 		}
+
+     } else if (!bt_uuid_cmp(discover_params.uuid, LBS_UUID_SERVICE)) {
+        discover_params.uuid = LBS_UUID_LED_CHAR;
+        discover_params.start_handle = attr->handle + 1;
+        discover_params.type = BT_GATT_DISCOVER_CHARACTERISTIC;
+
+        err = bt_gatt_discover(conn, &discover_params);
+        if (err) {
+            printk("Discover failed (err %d)\n", err);
+        }
+
+    } else if (!bt_uuid_cmp(discover_params.uuid, LBS_UUID_LED_CHAR)) {
+        led_char_handle = attr->handle + 2; // Assuming the value handle is handle + 2
+        return BT_GATT_ITER_STOP;
+
 	} else {
 		subscribe_params.notify = notify_func;
 		subscribe_params.value = BT_GATT_CCC_NOTIFY;
@@ -108,7 +130,7 @@ static uint8_t discover_func(struct bt_conn *conn,
 		return BT_GATT_ITER_STOP;
 	}
 
-	return BT_GATT_ITER_STOP;
+	return BT_GATT_ITER_CONTINUE;
 }
 
 static bool eir_found(struct bt_data *data, void *user_data)
@@ -191,6 +213,10 @@ static void start_scan(void)
 		.window     = BT_GAP_SCAN_FAST_WINDOW,
 	};
 
+    /* Wait a few seconds before restarting. */
+    printk("Waiting 5 seconds before starting scan...\n");
+    k_sleep(K_MSEC(5000));
+
 	err = bt_le_scan_start(&scan_param, device_found);
 	if (err) {
 		printk("Scanning failed to start (err %d)\n", err);
@@ -255,6 +281,35 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	start_scan();
 }
 
+static void write_led(bool state)
+{
+    uint8_t value = state ? 0x01 : 0x00;
+
+    write_params.data = &value;
+    write_params.length = sizeof(value);
+    write_params.handle = led_char_handle;
+    write_params.offset = 0;
+    //write_params.func = write_func;
+
+    int err = bt_gatt_write(default_conn, &write_params);
+    if (err) {
+        printk("Write failed (err %d)\n", err);
+    }
+}
+
+static void button_changed(uint32_t button_state, uint32_t has_changed)
+{
+    uint32_t buttons = button_state & has_changed;
+
+    if (buttons & DK_BTN1_MSK) {
+        write_led(true);
+    }
+    if (buttons & DK_BTN2_MSK) {
+        write_led(false);
+    }
+}
+
+
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = connected,
 	.disconnected = disconnected,
@@ -284,12 +339,10 @@ int main(void)
 
 	/* Initialize Sirocco Bluetooth IDS
 	 */
-	err = init_sirocco();
-	if (err) {
-		printk("Sirocco Bluetooth IDS init failed (err %d)\n", err);
-		return 0;
-	}
+ #if defined(CONFIG_BT_SIROCCO)
+	srcc_init();
 	printk("Sirocco Bluetooth IDS initialized\n");
+#endif
 
 
 	start_scan();
