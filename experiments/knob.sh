@@ -3,8 +3,7 @@
 # Evaluate the detection for a KNOB attack launched by mirage.
 # Warning: highly specific to my environment.
 # As you may know, using sleep for synchronization increase the chance of portability (wrong)
-#
-# Improve the return of Unexpected Mirage error to just discard the exp and continue
+
 
 #set -x
 set -euo pipefail
@@ -30,16 +29,16 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 MIRAGE_DIR=${USER_HOME}/projects/superviz/mirage-flo
 LOG_FILE="${SCRIPT_DIR}/knob.log"
 DETECTION_MODE_FILE="/tmp/detection_mode.tmp"
-TRUE_DETECTION_COUNT_FILE="/tmp/true_detection_count.tmp"
-FALSE_DETECTION_COUNT_FILE="/tmp/false_detection_count.tmp"
-SUCCESSFUL_LAUNCH_COUNT_FILE="/tmp/successful_launch_count.tmp"
+TRUE_DETECTION_COUNT_FILE="/tmp/knob_true_detection_count.tmp"
+FALSE_DETECTION_COUNT_FILE="/tmp/knob_false_detection_count.tmp"
+SUCCESSFUL_LAUNCH_COUNT_FILE="/tmp/knob_successful_launch_count.tmp"
 DEVICE_SERIAL=/dev/ttyACM0
 ADV_ADDR=DE:AD:BE:EF:AA:AA
 #INTERFACE=hci0
 #
 # ****************************************************************************
 #
-total_runs=20
+total_runs=1000
 attack_launch_count=0
 successful_launches=0
 benign_count=0
@@ -47,7 +46,7 @@ benign_count=0
 # ****************************************************************************
 
 log() {
-  echo "$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
+  echo "$(date +'%Y-%m-%d %H:%M:%S') [$$] - $1" | tee -a "$LOG_FILE"
 }
 
 reset_board() {
@@ -216,7 +215,7 @@ clean_experiment() {
     rm -f $DETECTION_MODE_FILE $TRUE_DETECTION_COUNT_FILE $FALSE_DETECTION_COUNT_FILE $DETECTION_MODE_FILE $SUCCESSFUL_LAUNCH_COUNT_FILE
 
     log "======================="
-    log "Test campaign completed"
+    log "Test campaign completed for evaluating KNOB detection"
     log "Total runs: $total_runs"
     log "Benign traffic runs: $benign_count"
     log "Attack launched runs: $attack_launch_count"
