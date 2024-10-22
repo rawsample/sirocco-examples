@@ -354,6 +354,7 @@ static int hci_uart_init(void)
 	return 0;
 }
 
+#if defined(CONFIG_BT_SIROCCO)
 static int init_sirocco(void)
 {
 	/* Initialize Sirocco Zephyr subsystem */
@@ -366,6 +367,7 @@ static int init_sirocco(void)
 
 	return 0;
 }
+#endif
 
 SYS_INIT(hci_uart_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
 
@@ -381,13 +383,16 @@ int main(void)
 	/* Enable the raw interface, this will in turn open the HCI driver */
 	bt_enable_raw(&rx_queue);
 
-	/* Initialize Sirocco Bluetooth IDS */
+	/* Initialize Sirocco Bluetooth IDS
+     */
+#if defined(CONFIG_BT_SIROCCO)
 	err = init_sirocco();
 	if (err) {
 		printk("Sirocco Bluetooth IDS init failed (err %d)\n", err);
 		return 0;
 	}
 	printk("Sirocco Bluetooth IDS initialized\n");
+#endif
 
 	if (IS_ENABLED(CONFIG_BT_WAIT_NOP)) {
 		/* Issue a Command Complete with NOP */

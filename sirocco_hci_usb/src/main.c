@@ -75,6 +75,7 @@ static int enable_usb_device_next(void)
 }
 #endif /* CONFIG_USB_DEVICE_STACK_NEXT */
 
+#if defined(CONFIG_BT_SIROCCO)
 static int init_sirocco(void)
 {
 	/* Initialize Sirocco Zephyr subsystem */
@@ -87,6 +88,7 @@ static int init_sirocco(void)
 
 	return 0;
 }
+#endif
 
 int main(void)
 {
@@ -103,13 +105,16 @@ int main(void)
 		return 0;
 	}
 
-	/* Initialize Sirocco Bluetooth IDS */
+	/* Initialize Sirocco Bluetooth IDS
+     */
+#if defined(CONFIG_BT_SIROCCO)
 	ret = init_sirocco();
 	if (ret) {
 		printk("Sirocco Bluetooth IDS init failed (err %d)\n", ret);
 		return 0;
 	}
 	printk("Sirocco Bluetooth IDS initialized\n");
+#endif
 
 	printk("Bluetooth over USB sample\n");
 	return 0;
