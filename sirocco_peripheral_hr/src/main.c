@@ -28,6 +28,7 @@
 #include <dk_buttons_and_leds.h>
 
 #include <zephyr/bluetooth/sirocco.h>
+#include <zephyr/bluetooth/srcc_time_analysis.h>
 
 
 #define RUN_STATUS_LED	DK_LED1
@@ -232,6 +233,12 @@ int main(void)
 		printk("Failed to init LBS (err:%d)\n", err);
 		return 0;
 	}
+
+    /* Initialized latency analysis
+     */
+#if defined(CONFIG_SRCC_ANALYSIS)
+    init_srcc_analysis();
+#endif
 
     /* Initialized Sirocco IDS 
      */

@@ -8,6 +8,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 
 #include <zephyr/bluetooth/sirocco.h>
+#include <zephyr/bluetooth/srcc_time_analysis.h>
 
 
 
@@ -35,6 +36,12 @@ int main(void)
 		printk("Bluetooth init failed (err %d)\n", err);
 		return 0;
 	}
+
+    /* Initialized latency analysis
+     */
+#if defined(CONFIG_SRCC_ANALYSIS)
+    init_srcc_analysis();
+#endif
 
 	/* Initialize Sirocco Bluetooth IDS
      */
