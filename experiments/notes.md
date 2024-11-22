@@ -173,6 +173,126 @@ Used with the example `broadcaster`.
 - On average we count **328 cycles** => **5,12 us**.
 - It is an latency overhead of **29,64%** of cycles.
 
+---
 
+## FIFO Latency
 
+Run of ~5min
+
+#### On `conn_rx` FIFO with `Central HR`
+
+```
+[00:05:00.440,521] <inf> srccanalysis: FIFO Analysis Results:
+[00:05:00.440,551] <inf> srccanalysis:   Total messages processed: 5850
+[00:05:00.440,551] <inf> srccanalysis:   Dropped messages: 0
+[00:05:00.440,551] <inf> srccanalysis:   Max queue length: 0
+[00:05:00.440,582] <inf> srccanalysis:   Avg latency: 1091 cycles (17 us)
+[00:05:00.440,582] <inf> srccanalysis:   Min latency: 1081 cycles (16 us)
+[00:05:00.440,582] <inf> srccanalysis:   Max latency: 5973 cycles (93 us)
+[00:10:00.442,749] <inf> srccanalysis: FIFO Analysis Results:
+[00:10:00.442,749] <inf> srccanalysis:   Total messages processed: 5993
+[00:10:00.442,779] <inf> srccanalysis:   Dropped messages: 0
+[00:10:00.442,779] <inf> srccanalysis:   Max queue length: 0
+[00:10:00.442,779] <inf> srccanalysis:   Avg latency: 1080 cycles (16 us)
+[00:10:00.442,810] <inf> srccanalysis:   Min latency: 546 cycles (8 us)
+[00:10:00.442,810] <inf> srccanalysis:   Max latency: 1089 cycles (17 us)
+```
+
+#### On `conn_rx` FIFO with `Peripheral HR`
+
+```
+[00:05:00.438,842] <inf> srccanalysis: FIFO Analysis Results:
+[00:05:00.438,873] <inf> srccanalysis:   Total messages processed: 5642
+[00:05:00.438,873] <inf> srccanalysis:   Dropped messages: 0
+[00:05:00.438,873] <inf> srccanalysis:   Max queue length: 0
+[00:05:00.438,903] <inf> srccanalysis:   Avg latency: 604 cycles (9 us)
+[00:05:00.438,903] <inf> srccanalysis:   Min latency: 547 cycles (8 us)
+[00:05:00.438,934] <inf> srccanalysis:   Max latency: 7612 cycles (118 us)
+[00:10:00.441,040] <inf> srccanalysis: FIFO Analysis Results:
+[00:10:00.441,040] <inf> srccanalysis:   Total messages processed: 5216
+[00:10:00.441,070] <inf> srccanalysis:   Dropped messages: 0
+[00:10:00.441,070] <inf> srccanalysis:   Max queue length: 0
+[00:10:00.441,101] <inf> srccanalysis:   Avg latency: 585 cycles (9 us)
+[00:10:00.441,101] <inf> srccanalysis:   Min latency: 547 cycles (8 us)
+[00:10:00.441,101] <inf> srccanalysis:   Max latency: 2014 cycles (31 us)
+[...]
+[00:05:00.442,230] <inf> srccanalysis: FIFO Analysis Results:
+[00:05:00.442,260] <inf> srccanalysis:   Total messages processed: 5860
+[00:05:00.442,260] <inf> srccanalysis:   Dropped messages: 0
+[00:05:00.442,260] <inf> srccanalysis:   Max queue length: 0
+[00:05:00.442,291] <inf> srccanalysis:   Avg latency: 562 cycles (8 us)
+[00:05:00.442,291] <inf> srccanalysis:   Min latency: 504 cycles (7 us)
+[00:05:00.442,291] <inf> srccanalysis:   Max latency: 7038 cycles (109 us)
+[00:10:00.444,824] <inf> srccanalysis: FIFO Analysis Results:
+[00:10:00.444,854] <inf> srccanalysis:   Total messages processed: 6000
+[00:10:00.444,854] <inf> srccanalysis:   Dropped messages: 0
+[00:10:00.444,854] <inf> srccanalysis:   Max queue length: 0
+[00:10:00.444,885] <inf> srccanalysis:   Avg latency: 550 cycles (8 us)
+[00:10:00.444,885] <inf> srccanalysis:   Min latency: 527 cycles (8 us)
+[00:10:00.444,885] <inf> srccanalysis:   Max latency: 1989 cycles (31 us)
+```
+
+#### On `conn_tx` FIFO with `Central HR`
+
+```
+[00:05:00.438,568] <inf> srccanalysis: FIFO Analysis Results:
+[00:05:00.438,598] <inf> srccanalysis:   Total messages processed: 5870
+[00:05:00.438,598] <inf> srccanalysis:   Dropped messages: 0
+[00:05:00.438,629] <inf> srccanalysis:   Max queue length: 0
+[00:05:00.438,629] <inf> srccanalysis:   Avg latency: 541 cycles (8 us)
+[00:05:00.438,629] <inf> srccanalysis:   Min latency: 528 cycles (8 us)
+[00:05:00.438,659] <inf> srccanalysis:   Max latency: 542 cycles (8 us)
+[00:10:00.440,795] <inf> srccanalysis: FIFO Analysis Results:
+[00:10:00.440,826] <inf> srccanalysis:   Total messages processed: 6000
+[00:10:00.440,826] <inf> srccanalysis:   Dropped messages: 1
+[00:10:00.440,826] <inf> srccanalysis:   Max queue length: 0
+[00:10:00.440,856] <inf> srccanalysis:   Avg latency: 541 cycles (8 us)
+[00:10:00.440,856] <inf> srccanalysis:   Min latency: 534 cycles (8 us)
+[00:10:00.440,856] <inf> srccanalysis:   Max latency: 542 cycles (8 us)
+```
+
+#### On `scan_rx` FIFO with `Central HR`
+
+```
+[00:05:00.442,932] <inf> srccanalysis: FIFO Analysis Results:
+[00:05:00.442,962] <inf> srccanalysis:   Total messages processed: 9
+[00:05:00.442,962] <inf> srccanalysis:   Dropped messages: 0
+[00:05:00.442,993] <inf> srccanalysis:   Max queue length: 0
+[00:05:00.442,993] <inf> srccanalysis:   Avg latency: 2985 cycles (46 us)
+[00:05:00.442,993] <inf> srccanalysis:   Min latency: 634 cycles (9 us)
+[00:05:00.443,023] <inf> srccanalysis:   Max latency: 10776 cycles (168 us)
+[00:10:00.255,371] <inf> srccanalysis: FIFO Analysis Results:
+[00:10:00.255,401] <inf> srccanalysis:   Total messages processed: 2148
+[00:10:00.255,401] <inf> srccanalysis:   Dropped messages: 0
+[00:10:00.255,432] <inf> srccanalysis:   Max queue length: 0
+[00:10:00.255,432] <inf> srccanalysis:   Avg latency: 2888 cycles (45 us)
+[00:10:00.255,462] <inf> srccanalysis:   Min latency: 620 cycles (9 us)
+[00:10:00.255,462] <inf> srccanalysis:   Max latency: 5256 cycles (82 us)
+```
+
+#### On `scan_rx` FIFO with `Observer HR` with a `Broadcaster` nearby
+
+```
+[00:05:00.253,631] <inf> srccanalysis: FIFO Analysis Results:
+[00:05:00.253,631] <inf> srccanalysis:   Total messages processed: 206
+[00:05:00.253,662] <inf> srccanalysis:   Dropped messages: 0
+[00:05:00.253,662] <inf> srccanalysis:   Max queue length: 0
+[00:05:00.253,662] <inf> srccanalysis:   Avg latency: 658 cycles (10 us)
+[00:05:00.253,692] <inf> srccanalysis:   Min latency: 552 cycles (8 us)
+[00:05:00.253,692] <inf> srccanalysis:   Max latency: 4260 cycles (66 us)
+[00:10:00.254,180] <inf> srccanalysis: FIFO Analysis Results:
+[00:10:00.254,180] <inf> srccanalysis:   Total messages processed: 1095
+[00:10:00.254,211] <inf> srccanalysis:   Dropped messages: 0
+[00:10:00.254,211] <inf> srccanalysis:   Max queue length: 0
+[00:10:00.254,211] <inf> srccanalysis:   Avg latency: 1113 cycles (17 us)
+[00:10:00.254,241] <inf> srccanalysis:   Min latency: 552 cycles (8 us)
+[00:10:00.254,241] <inf> srccanalysis:   Max latency: 4257 cycles (66 us)
+[00:15:00.254,699] <inf> srccanalysis: FIFO Analysis Results:
+[00:15:00.254,730] <inf> srccanalysis:   Total messages processed: 1087
+[00:15:00.254,760] <inf> srccanalysis:   Dropped messages: 0
+[00:15:00.254,760] <inf> srccanalysis:   Max queue length: 0
+[00:15:00.254,760] <inf> srccanalysis:   Avg latency: 1166 cycles (18 us)
+[00:15:00.254,791] <inf> srccanalysis:   Min latency: 552 cycles (8 us)
+[00:15:00.254,791] <inf> srccanalysis:   Max latency: 4275 cycles (66 us)
+```
 

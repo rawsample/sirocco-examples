@@ -340,7 +340,7 @@ int main(void)
 
     /* Initialized latency analysis
      */
-#if defined(CONFIG_SRCC_ISR_LATENCY)
+#if defined(CONFIG_SRCC_ANALYSIS)
     init_srcc_analysis();
 #endif
 
