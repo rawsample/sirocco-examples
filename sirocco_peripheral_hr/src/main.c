@@ -28,7 +28,6 @@
 #include <dk_buttons_and_leds.h>
 
 #include <zephyr/bluetooth/sirocco.h>
-#include <zephyr/bluetooth/srcc_time_analysis.h>
 
 
 #define RUN_STATUS_LED	DK_LED1

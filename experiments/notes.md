@@ -296,3 +296,131 @@ Run of ~5min
 [00:15:00.254,791] <inf> srccanalysis:   Max latency: 4275 cycles (66 us)
 ```
 
+---
+
+## End to end latency analysis
+
+Run of ~5min.
+Timestamps taken between when the metric is collected to when the data is proceed.
+
+#### On `conn_rx` FIFO with `Central HR`
+
+```
+[00:05:00.439,880] <inf> srccanalysis: E2E Analysis Results:
+[00:05:00.439,910] <inf> srccanalysis:   For conn_rx:
+[00:05:00.439,910] <inf> srccanalysis:     Total packets processed: 5852
+[00:05:00.439,941] <inf> srccanalysis:     Avg latency: 1323 cycles (20 us)
+[00:05:00.439,941] <inf> srccanalysis:     Min latency: 1312 cycles (20 us)
+[00:05:00.439,941] <inf> srccanalysis:     Max latency: 6263 cycles (97 us)
+[00:10:00.442,382] <inf> srccanalysis: E2E Analysis Results:
+[00:10:00.442,382] <inf> srccanalysis:   For conn_rx:
+[00:10:00.442,413] <inf> srccanalysis:     Total packets processed: 6000
+[00:10:00.442,413] <inf> srccanalysis:     Avg latency: 1312 cycles (20 us)
+[00:10:00.442,443] <inf> srccanalysis:     Min latency: 1312 cycles (20 us)
+[00:10:00.442,443] <inf> srccanalysis:     Max latency: 1319 cycles (20 us)
+[...]
+[03:00:00.527,893] <inf> srccanalysis: E2E Analysis Results:
+[03:00:00.527,923] <inf> srccanalysis:   For conn_rx:
+[03:00:00.527,954] <inf> srccanalysis:     Total packets processed: 5995
+[03:00:00.527,954] <inf> srccanalysis:     Avg latency: 1312 cycles (20 us)
+[03:00:00.527,954] <inf> srccanalysis:     Min latency: 1312 cycles (20 us)
+[03:00:00.527,984] <inf> srccanalysis:     Max latency: 1319 cycles (20 us)
+```
+
+#### On `conn_rx` FIFO with `Peripheral HR`
+
+```
+[00:05:00.439,453] <inf> srccanalysis: E2E Analysis Results:
+[00:05:00.439,483] <inf> srccanalysis:   For conn_rx:
+[00:05:00.439,483] <inf> srccanalysis:     Total packets processed: 5964
+[00:05:00.439,483] <inf> srccanalysis:     Avg latency: 609 cycles (9 us)
+[00:05:00.439,514] <inf> srccanalysis:     Min latency: 571 cycles (8 us)
+[00:05:00.439,514] <inf> srccanalysis:     Max latency: 6726 cycles (105 us)
+[00:10:00.442,047] <inf> srccanalysis: E2E Analysis Results:
+[00:10:00.442,047] <inf> srccanalysis:   For conn_rx:
+[00:10:00.442,047] <inf> srccanalysis:     Total packets processed: 6000
+[00:10:00.442,077] <inf> srccanalysis:     Avg latency: 599 cycles (9 us)
+[00:10:00.442,077] <inf> srccanalysis:     Min latency: 571 cycles (8 us)
+[00:10:00.442,077] <inf> srccanalysis:     Max latency: 2070 cycles (32 us)
+[00:15:00.444,641] <inf> srccanalysis: E2E Analysis Results:
+[00:15:00.444,641] <inf> srccanalysis:   For conn_rx:
+[00:15:00.444,641] <inf> srccanalysis:     Total packets processed: 6001
+[00:15:00.444,671] <inf> srccanalysis:     Avg latency: 599 cycles (9 us)
+[00:15:00.444,671] <inf> srccanalysis:     Min latency: 570 cycles (8 us)
+[00:15:00.444,671] <inf> srccanalysis:     Max latency: 1959 cycles (30 us)
+[00:20:00.447,235] <inf> srccanalysis: E2E Analysis Results:
+[00:20:00.447,235] <inf> srccanalysis:   For conn_rx:
+[00:20:00.447,235] <inf> srccanalysis:     Total packets processed: 5999
+[00:20:00.447,265] <inf> srccanalysis:     Avg latency: 598 cycles (9 us)
+[00:20:00.447,265] <inf> srccanalysis:     Min latency: 570 cycles (8 us)
+[00:20:00.447,265] <inf> srccanalysis:     Max latency: 600 cycles (9 us)
+[00:25:00.449,829] <inf> srccanalysis: E2E Analysis Results:
+[00:25:00.449,829] <inf> srccanalysis:   For conn_rx:
+[00:25:00.449,829] <inf> srccanalysis:     Total packets processed: 6001
+[00:25:00.449,859] <inf> srccanalysis:     Avg latency: 598 cycles (9 us)
+[00:25:00.449,859] <inf> srccanalysis:     Min latency: 570 cycles (8 us)
+[00:25:00.449,859] <inf> srccanalysis:     Max latency: 860 cycles (13 us)
+```
+
+#### On `conn_tx` FIFO with `Central HR`
+
+`conn_tx` is not really relevant right now because no detection module uses it.
+
+```
+[00:05:00.444,885] <inf> srccanalysis:   For conn_tx:
+[00:05:00.444,915] <inf> srccanalysis:     Total packets processed: 5321
+[00:05:00.444,915] <inf> srccanalysis:     Avg latency: 901018 cycles (14078 us)
+[00:05:00.444,915] <inf> srccanalysis:     Min latency: 5278 cycles (82 us)
+[00:05:00.444,946] <inf> srccanalysis:     Max latency: 544981744 cycles (8515339 us)
+[00:10:00.451,141] <inf> srccanalysis:   For conn_tx:
+[00:10:00.451,141] <inf> srccanalysis:     Total packets processed: 6000
+[00:10:00.451,171] <inf> srccanalysis:     Avg latency: 799167 cycles (12486 us)
+[00:10:00.451,171] <inf> srccanalysis:     Min latency: 795799 cycles (12434 us)
+[00:10:00.451,171] <inf> srccanalysis:     Max latency: 1597967 cycles (24968 us)
+```
+
+#### On `scan_rx` FIFO with `Central HR` with a `Broadcaster` nearby
+
+```
+[00:05:00.438,934] <inf> srccanalysis:   For scan_rx:
+[00:05:00.438,934] <inf> srccanalysis:     Total packets processed: 335
+[00:05:00.438,934] <inf> srccanalysis:     Avg latency: 3039 cycles (47 us)
+[00:05:00.438,964] <inf> srccanalysis:     Min latency: 1200 cycles (18 us)
+[00:05:00.438,964] <inf> srccanalysis:     Max latency: 6328 cycles (98 us)
+[00:10:00.439,971] <inf> srccanalysis:   For scan_rx:
+[00:10:00.439,971] <inf> srccanalysis:     Total packets processed: 540
+[00:10:00.440,002] <inf> srccanalysis:     Avg latency: 2852 cycles (44 us)
+[00:10:00.440,002] <inf> srccanalysis:     Min latency: 1207 cycles (18 us)
+[00:10:00.440,032] <inf> srccanalysis:     Max latency: 6940 cycles (108 us)
+[00:15:00.441,070] <inf> srccanalysis:   For scan_rx:
+[00:15:00.441,070] <inf> srccanalysis:     Total packets processed: 612
+[00:15:00.441,101] <inf> srccanalysis:     Avg latency: 2973 cycles (46 us)
+[00:15:00.441,101] <inf> srccanalysis:     Min latency: 1398 cycles (21 us)
+[00:15:00.441,101] <inf> srccanalysis:     Max latency: 6594 cycles (103 us)
+[00:20:00.442,108] <inf> srccanalysis:   For scan_rx:
+[00:20:00.442,108] <inf> srccanalysis:     Total packets processed: 422
+[00:20:00.442,108] <inf> srccanalysis:     Avg latency: 2832 cycles (44 us)
+[00:20:00.442,138] <inf> srccanalysis:     Min latency: 1178 cycles (18 us)
+[00:20:00.442,138] <inf> srccanalysis:     Max latency: 7091 cycles (110 us)
+```
+
+#### On `scan_rx` FIFO with `Observer HR` with a `Broadcaster` nearby
+
+```
+[00:05:00.253,936] <inf> srccanalysis:   For scan_rx:
+[00:05:00.253,967] <inf> srccanalysis:     Total packets processed: 654
+[00:05:00.253,967] <inf> srccanalysis:     Avg latency: 2757 cycles (43 us)
+[00:05:00.253,967] <inf> srccanalysis:     Min latency: 1211 cycles (18 us)
+[00:05:00.253,997] <inf> srccanalysis:     Max latency: 10141 cycles (158 us)
+[00:10:00.255,310] <inf> srccanalysis:   For scan_rx:
+[00:10:00.255,310] <inf> srccanalysis:     Total packets processed: 973
+[00:10:00.255,340] <inf> srccanalysis:     Avg latency: 3132 cycles (48 us)
+[00:10:00.255,340] <inf> srccanalysis:     Min latency: 1734 cycles (27 us)
+[00:10:00.255,371] <inf> srccanalysis:     Max latency: 8309 cycles (129 us)
+[00:15:00.256,469] <inf> srccanalysis:   For scan_rx:
+[00:15:00.256,500] <inf> srccanalysis:     Total packets processed: 498
+[00:15:00.256,500] <inf> srccanalysis:     Avg latency: 2754 cycles (43 us)
+[00:15:00.256,500] <inf> srccanalysis:     Min latency: 1038 cycles (16 us)
+[00:15:00.256,530] <inf> srccanalysis:     Max latency: 5952 cycles (93 us)
+```
+
